@@ -2,6 +2,7 @@ package com.example.Practice.service.impl;
 
 import java.util.List;
 
+
 import org.springframework.stereotype.Service;
 
 import com.example.Practice.model.Account;
@@ -36,5 +37,18 @@ public class InMemoryAccount implements AccountService {
     public Account findAccountById(long id) {
         return repos.findAccountById(id);
   }
+
+    @Override
+    public void changeBalane(long accountId, double n) {
+  
+   repos.changeBalane(accountId, n);
+
+      }
+
+    @Override
+    public void transfer( Account account, double n, Account recipient) {
+     repos.transfer(account, n, recipient);
+    }
+
 
 }
