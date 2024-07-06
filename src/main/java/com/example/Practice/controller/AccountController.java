@@ -24,10 +24,10 @@ public class AccountController {
     private final AccountService service;
     
     @GetMapping
-    public List<Account> returnAllAccounts()
+    public List<Account> findAllAccounts()
 {
 
-return service.returnAllAcounts();
+return service.findAllAcounts();
 }
 
 @PostMapping("save")
@@ -79,5 +79,7 @@ service.changeBalane(from, -n);
     }
     return message;
 }
+
+
 
 }

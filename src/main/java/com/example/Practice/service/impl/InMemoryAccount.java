@@ -17,8 +17,8 @@ public class InMemoryAccount implements AccountService {
 
   private final InMemoryAccountDAO repos ;
     @Override
-    public List<Account> returnAllAcounts() {
-        return repos.returnAllAccounts();
+    public List<Account> findAllAcounts() {
+        return repos.findAllAccounts();
         
     }
 

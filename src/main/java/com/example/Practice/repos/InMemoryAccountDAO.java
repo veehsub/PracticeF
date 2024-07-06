@@ -11,7 +11,7 @@ public class InMemoryAccountDAO {
 
     public List<Account>  ACCOUNTS = new ArrayList<>();
 
-public List<Account> returnAllAccounts()
+public List<Account> findAllAccounts()
 {
 return ACCOUNTS;
 }
