@@ -12,8 +12,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.Practice.model.Account;
+import com.example.Practice.model.Card;
 import com.example.Practice.model.Transaction;
 import com.example.Practice.service.AccountService;
+import com.example.Practice.service.CardService;
 import com.example.Practice.service.TransactionService;
 
 import lombok.AllArgsConstructor;
@@ -25,6 +27,7 @@ public class AccountController {
 
     private final AccountService service;
   private final TransactionService transactionService;
+  private final CardService cardService;
 
     @GetMapping
     public List<Account> findAllAccounts()
@@ -92,6 +95,30 @@ public List<Transaction> findAllTransactionsById(@PathVariable long id)
 return transactionService.findAllTransactionsByAccountId(id);
 }
 
+@PostMapping("save_card{accId}")
+public String addCard(@PathVariable long accId)
+{
+    Account account  = findAccountById(accId);
+
+    Card card = new Card();
+    card.setAccount(account);
+cardService.save(card);
+return "Card has been successfully created";
+}
+
+@DeleteMapping("delete_card/{id}")
+public String deleteCardById(@PathVariable long id)
+{
+  
+    cardService.deleteCardById(id);
+    return "Card has been successfully deleted";
+}
+
+@GetMapping("/cards{id}")
+public List<Card> findAllCardsById(@PathVariable long id)
+{
+return cardService.findAllCardsByAccountId(id);
+}
 
 
 }

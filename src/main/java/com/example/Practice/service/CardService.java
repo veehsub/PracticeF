@@ -6,7 +6,7 @@ import com.example.Practice.model.Card;
 
 public interface CardService  {
 void save(Card card);
-void delete(Card card);
+void deleteCardById(long id);
 List<Card> findAllCardsByAccountId(long id);
-double getCardBalance();
+
 }
