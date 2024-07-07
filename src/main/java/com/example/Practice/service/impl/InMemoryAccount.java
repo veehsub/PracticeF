@@ -46,9 +46,10 @@ public class InMemoryAccount implements AccountService {
       }
 
     @Override
-    public void transfer( Account account, double n, Account recipient) {
-     repos.transfer(account, n, recipient);
+    public void transfer(long fromId, long toId, double n) {
+      n =5;
     }
 
+    
 
 }

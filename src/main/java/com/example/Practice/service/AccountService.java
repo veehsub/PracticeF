@@ -9,6 +9,6 @@ void addAccount(Account account);
 void deleteAccountById(long id);
 Account findAccountById(long id); 
 void changeBalane(long accountId, double n);
-void transfer(Account account , double n, Account recipient );
+void transfer(long fromId, long toId, double n );
 
 }

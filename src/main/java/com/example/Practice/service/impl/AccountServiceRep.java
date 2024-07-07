@@ -7,7 +7,10 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 import com.example.Practice.model.Account;
+import com.example.Practice.model.Transaction;
+import com.example.Practice.model.TypeOfTransaction;
 import com.example.Practice.repos.AccountRepository;
+
 import com.example.Practice.service.AccountService;
 
 import lombok.AllArgsConstructor;
@@ -18,7 +21,7 @@ import lombok.AllArgsConstructor;
 public class AccountServiceRep implements AccountService {
     
 private final AccountRepository repository;  
-
+private final TransactionServiceRep transactionRepository;
 
     @Override
     public void addAccount(Account account) {
@@ -38,13 +41,33 @@ repository.save(account);
     }
     @Override
     public void changeBalane(long accountId, double n) {
+    Account account = findAccountById(accountId);
+     Transaction transaction = new Transaction();
+     transaction.setTransaction_sum(Math.abs(n));
+     transaction.setFromAccount(account);
+    
+     if(n<0){transaction.setTypeOfTransaction(TypeOfTransaction.Payment);}
+     else{transaction.setTypeOfTransaction(TypeOfTransaction.Replenishment);}
+
+transactionRepository.saveTransaction(transaction);
+
      repository.setBalance(accountId, n);
     }
 
     @Override
-    public void transfer(Account account, double n, Account recipient) {
-        repository.setBalance(account.getAccountId(), -n);
-        repository.setBalance(recipient.getAccountId(), n);
+    public void transfer(long fromId, long toId, double n) {
+        Account accountFrom = findAccountById(fromId);
+        Account accountTo = findAccountById(toId);
+        Transaction transaction = new Transaction();
+        transaction.setTransaction_sum(Math.abs(n));
+        transaction.setFromAccount(accountFrom);
+        transaction.setToAccount(accountTo);
+       transaction.setTypeOfTransaction(TypeOfTransaction.Transfer);
+        transactionRepository.saveTransaction(transaction);
+
+        repository.setBalance(fromId, -n);
+        repository.setBalance(toId, n);
+
      }
 
     @Override

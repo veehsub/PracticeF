@@ -12,7 +12,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.Practice.model.Account;
+import com.example.Practice.model.Transaction;
 import com.example.Practice.service.AccountService;
+import com.example.Practice.service.TransactionService;
 
 import lombok.AllArgsConstructor;
 
@@ -22,13 +24,16 @@ import lombok.AllArgsConstructor;
 public class AccountController {
 
     private final AccountService service;
-    
+  private final TransactionService transactionService;
+
     @GetMapping
     public List<Account> findAllAccounts()
 {
 
 return service.findAllAcounts();
 }
+
+
 
 @PostMapping("save")
 public String addAccount(@RequestBody Account account)
@@ -73,11 +78,18 @@ public String transfer(@PathVariable long from,@PathVariable long to,@PathVariab
     }
     else 
     {
+
 message = "Перевод успешен";
-service.changeBalane(to, n);
-service.changeBalane(from, -n);
+service.transfer(from, to, n);
+    
     }
     return message;
+}
+
+@GetMapping("/transactions/{id}")
+public List<Transaction> findAllTransactionsById(@PathVariable long id)
+{
+return transactionService.findAllTransactionsByAccountId(id);
 }
 
 
