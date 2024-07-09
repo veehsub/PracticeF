@@ -9,9 +9,10 @@ import com.example.Practice.model.Account;
 
 import jakarta.transaction.Transactional;
 
-public interface AccountRepository  extends JpaRepository <Account, Long>{
+public interface AccountRepository extends JpaRepository<Account, Long> {
 
     @Modifying
     @Transactional
-    @Query("UPDATE Account  SET balance = balance + :balanceChange WHERE accountId = :accountId")
-    void setBalance(@Param("accountId") Long accountId, @Param("balanceChange") double balanceChange); }
+    @Query("UPDATE Account  SET balance = :balanceChange WHERE accountId = :accountId")
+    void setBalance(@Param("accountId") Long accountId, @Param("balanceChange") double balanceChange);
+}

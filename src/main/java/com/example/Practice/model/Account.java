@@ -1,5 +1,6 @@
 package com.example.Practice.model;
 
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -11,15 +12,18 @@ import lombok.Data;
 @Data
 @Entity
 public class Account {
-@Id
-@GeneratedValue(strategy = GenerationType.IDENTITY)
-private long accountId;
-@Column
-private double balance;
+    @Id
+    @Column(name =  "account_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long accountId;
+    @Column()
+    private double balance;
 
+  
 
-//  @ManyToOne
-//  @JoinColumn(name = "user_id")
-private long user_id;
+     
+    // @ManyToOne
+    // @JoinColumn(name = "user_id")
+    private long userId;
 
 }

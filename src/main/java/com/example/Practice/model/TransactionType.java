@@ -1,5 +1,5 @@
 package com.example.Practice.model;
 
-public enum TypeOfTransaction {
+public enum TransactionType {
     Payment, Transfer, Replenishment;
 }
