@@ -2,7 +2,6 @@ package com.example.Practice.service.impl;
 
 import java.util.List;
 
-
 import org.springframework.stereotype.Service;
 
 import com.example.Practice.model.Account;
@@ -15,40 +14,45 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class InMemoryAccount implements AccountService {
 
-  private final InMemoryAccountDAO repos ;
-    @Override
-    public List<Account> returnAllAcounts() {
-        return repos.returnAllAccounts();
-        
-    }
+  private final InMemoryAccountDAO repos;
 
-    @Override
-    public void addAccount(Account account) {
-    repos.addAccount(account);  
-    }
+  @Override
+  public List<Account> findAllAcounts() {
+    return repos.findAllAccounts();
 
-    @Override
-    public void deleteAccountById(long id) {
-    repos.deleteAccountById(id);
-    }
-
-
-    @Override
-    public Account findAccountById(long id) {
-        return repos.findAccountById(id);
   }
 
-    @Override
-    public void changeBalane(long accountId, double n) {
-  
-   repos.changeBalane(accountId, n);
+  @Override
+  public void addAccount(Account account) {
+    repos.addAccount(account);
+  }
 
-      }
+  @Override
+  public void deleteAccountById(long id) {
+    repos.deleteAccountById(id);
+  }
 
-    @Override
-    public void transfer( Account account, double n, Account recipient) {
-     repos.transfer(account, n, recipient);
-    }
+  @Override
+  public Account findAccountById(long id) {
+    return repos.findAccountById(id);
+  }
 
+
+  @Override
+  public void transfer(long fromId, long toId, double n) {
+    n = 5;
+  }
+
+  @Override
+  public void payment(long accountId, double n) {
+   
+    throw new UnsupportedOperationException("Unimplemented method 'payment'");
+  }
+
+  @Override
+  public void replenishment(long accountId, double n) {
+   
+    throw new UnsupportedOperationException("Unimplemented method 'replenishment'");
+  }
 
 }

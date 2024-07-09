@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Account Management</title>
+    <style>
+        body {
+            font-family: sans-serif;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 50%;
+        }
+
+        th,
+        td {
+            text-align: left;
+            padding: 8px;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .form-container {
+            margin-top: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 10px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .form-input {
+            width: 10%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            
+        }
+
+        .form-button {
+            padding: 8px 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+    </style>
+</head>
+
+<body>
+    <h1>Account Management</h1>
+    <h2>Accounts</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Balance</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="accounts-table">
+            <!-- Account data will be loaded here -->
+        </tbody>
+    </table>
+
+    <div class="form-container">
+        <h2>Add Account</h2>
+        <form id="add-account-form" onsubmit="addAccount(event)" input type="reset">
+            <input type="number" id="balance" placeholder="Balance">
+            <button type="submit">Add Account</button>
+        </form>
+    </div>
+
+    
+        <h2>Account operations</h2>
+        <form id="replenishment-account-form" onsubmit="replenishment(event)">
+            <input type="number" id="accIdR" placeholder="Account Id">
+            <input type="number" id="sumOfReplenishment" placeholder="Sum of replenishment">
+            <button type="submit">Replenishment</button>
+        </form>
+        <form id="payment-account-form" onsubmit="payment(event)">
+            <input type="number" id="accIdP" placeholder="Account Id">
+            <input type="number" id="sumOfPayment" placeholder="Sum of payment">
+            <button type="submit">Payment</button>
+        </form>
+        <form id="transfer-account-form" onsubmit="transfer(event)">
+            <input type="number" id="accIdFrom" placeholder="From account">
+            <input type="number" id="accIdTo" placeholder="To account">
+            <input type="number" id="sumOfTransfer" placeholder="Sum of transfer">
+            <button type="submit">Transfer</button>
+        </form>
+   
+
+
+    <h2>Cards</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Account ID</th>
+                <th>Card ID</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="cards-table">
+            <!-- Card data will be loaded here -->
+        </tbody>
+    </table>
+
+    <div class="form-container">
+        <h2>Add Card</h2>
+        <form id="add-card-form" onsubmit="addCard(event)" input type="reset">
+            <div class="form-group">
+                <label for="accId" class="form-label">Account ID:</label>
+                <input type="number" id="accId" name="accId" class="form-input" required>
+            </div>
+            <button type="submit" class="form-button">Add Card</button>
+        </form>
+    </div>
+
+    <h2>Transactions</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>From Account ID</th>
+                <th>To Account ID</th>
+                <th>Amount</th>
+                <th>Type</th>
+            </tr>
+        </thead>
+        <tbody id="transactions-table">
+            <!-- Transaction data will be loaded here -->
+        </tbody>
+    </table>
+
+    <script>
+        // Function to load accounts data
+        function loadAccounts() {
+            fetch('/account')
+                .then(response => response.json())
+                .then(accounts => {
+                    const accountsTable = document.getElementById('accounts-table');
+                    accountsTable.innerHTML = '';
+                    accounts.forEach(account => {
+                        const row = accountsTable.insertRow();
+                        const idCell = row.insertCell();
+                        const balanceCell = row.insertCell();
+                        const actionsCell = row.insertCell();
+
+                        idCell.textContent = account.accountId;
+                        balanceCell.textContent = account.balance;
+
+                        const deleteButton = document.createElement('button');
+                        deleteButton.textContent = 'Delete';
+                        deleteButton.addEventListener('click', () => deleteAccount(account.accountId));
+
+                        const loadCardsButton = document.createElement('button');
+                        loadCardsButton.textContent = 'Load Cards';
+                        loadCardsButton.addEventListener('click', () => loadCardsByAccountId(account.accountId));
+
+                        const loadTransactionsButton = document.createElement('button');
+                        loadTransactionsButton.textContent = 'Load transactions';
+                        loadTransactionsButton.addEventListener('click', () => loadTransactionsByAccountId(account.accountId));
+
+                        actionsCell.appendChild(deleteButton);
+                        actionsCell.appendChild(loadCardsButton);
+                        actionsCell.appendChild(loadTransactionsButton);
+                    });
+                })
+                .catch(error => console.error('Error loading accounts:', error));
+        }
+
+        function deleteAccount(accountId) {
+            url = "/account/delete/" + accountId;
+            fetch(url, {
+                method: 'DELETE'
+            })
+                .then(response => {
+                    if (response.ok) {
+                        loadAccounts(); // Reload the accounts after successful deletion
+                    } else {
+                        console.error('Error deleting account');
+                    }
+                })
+                .catch(error => console.error('Error deleting account:', error));
+        }
+
+        function loadCardsByAccountId(accountId) {
+            url = "/card/account/" + accountId;
+            fetch(url)
+                .then(response => response.json())
+                .then(cards => {
+                    const cardTable = document.getElementById('cards-table');
+                    cardTable.innerHTML = ''
+                    cards.forEach(card => {
+                        const cardRow = cardTable.insertRow();
+                        const cardNumberCell = cardRow.insertCell();
+                        const cardIdCell = cardRow.insertCell();
+                        const cardActionsCell = cardRow.insertCell();
+                        cardIdCell.textContent = card.cardId;
+                        cardNumberCell.textContent = card.account.accountId;
+                        const deleteButton = document.createElement('button');
+                        deleteButton.textContent = 'Delete';
+                        deleteButton.addEventListener('click', () => deleteCard(account.accountId));
+                        cardActionsCell.appendChild(deleteButton);
+                    });
+                })
+                .catch(error => console.error('Error loading cards:', error));
+        }
+
+        function loadTransactionsByAccountId(accountId) {
+            url = "/transaction/account/" + accountId;
+            fetch(url)
+                .then(response => response.json())
+                .then(transactions => {
+                    const transactionTable = document.getElementById('transactions-table');
+                    transactionTable.innerHTML = ''
+                    transactions.forEach(transaction => {
+                        const transactionRow = transactionTable.insertRow();
+                        const transactionIdCell = transactionRow.insertCell();
+                        const transactionFromAccountIdCell = transactionRow.insertCell();
+                        const transactionToAccountIdCell = transactionRow.insertCell();
+                        const transactionSumOfTransactionCell = transactionRow.insertCell();
+                        const transactionTypeCell = transactionRow.insertCell();
+                        transactionIdCell.textContent = transaction.transactionId;
+                        transactionFromAccountIdCell.textContent = transaction.fromAccount.accountId;
+                        if (transaction.toAccount != null) {
+                            transactionToAccountIdCell.textContent = transaction.toAccount.accountId;
+                        }
+                        else {
+                            transactionToAccountIdCell.textContent = '-';
+                        }
+                        transactionSumOfTransactionCell.textContent = transaction.transactionSum;
+                        transactionTypeCell.textContent = transaction.typeOfTransaction;
+                    });
+                })
+                .catch(error => console.error('Error loading cards:', error));
+        }
+
+        // Function to add a new account
+        function addAccount(event) {
+            event.preventDefault();
+            const balance = document.getElementById('balance').value;
+            fetch('/account/save', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ balance: balance })
+            })
+                .then(response => {
+                    if (response.ok) {
+                        loadAccounts(); // Reload accounts after adding
+                    } else {
+                        alert('Error adding account!');
+                    }
+                });
+        }
+
+        function addCard(event) {
+            event.preventDefault();
+            const accountId = document.getElementById('accId').value;
+            url = '/card/save/' + accountId;
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+
+            })
+                .then(response => {
+                    if (response.ok) {
+                        loadAccounts(); // Reload accounts after adding
+                    } else {
+                        alert('Error adding card!');
+                    }
+                });
+        }
+
+        function payment(event) {
+            event.preventDefault();
+            const accountId = document.getElementById('accIdP').value;
+            const sunOfPayment = document.getElementById('sumOfPayment').value;
+            url = '/account/payment/' + accountId+ '/'+ (-sunOfPayment);
+            fetch(url, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+
+            })
+                .then(response => {
+                    if (response.ok) {
+                        loadAccounts(); // Reload accounts after adding
+                    } else {
+                        alert('Error adding card!');
+                    }
+                });
+        }
+
+        function replenishment(event) {
+            event.preventDefault();
+            const accountId = document.getElementById('accIdR').value;
+            const sunOfPayment = document.getElementById('sumOfReplenishment').value;
+            url = '/account/replenishment/' + accountId+ '/'+ sunOfPayment;
+            fetch(url, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+
+            })
+                .then(response => {
+                    if (response.ok) {
+                        loadAccounts(); // Reload accounts after adding
+                    } else {
+                        alert('Error!');
+                    }
+                });
+        }
+
+
+        function transfer(event) {
+            event.preventDefault();
+            const accountFrom = document.getElementById('accIdFrom').value;
+            const accountTo = document.getElementById('accIdTo').value;
+            const sunOfPayment = document.getElementById('sumOfTransfer').value;
+            url = '/account/transfer/' + accountFrom + '/'+ accountTo + '/' + sunOfPayment;
+            fetch(url, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+
+            })
+                .then(response => {
+                    if (response.ok) {
+                        loadAccounts(); // Reload accounts after adding
+                    } else {
+                        alert('Error!');
+                    }
+                });
+        }
+        // <form id="transfer-account-form" onsubmit="transfer(event)">
+        //     <input type="number" id="accIdFrom" placeholder="From account">
+        //     <input type="number" id="accIdTo" placeholder="To account">
+        //     <input type="number" id="sumOfTransfer" placeholder="Sum of transfer">
+        //     <button type="submit">Transfer</button>
+        // </form>
+
+        loadAccounts();
+    </script>
+
+</body>
+
+</html>
